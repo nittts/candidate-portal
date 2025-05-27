@@ -1,0 +1,35 @@
+import { DateTime } from 'luxon'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+
+import User from '#models/user/user'
+
+export default class Invite extends BaseModel {
+  @column({ isPrimary: true })
+  declare id: number
+
+  @column({ columnName: 'selected_date' })
+  declare selectedDate: string
+
+  @column({ columnName: 'candidate_id' })
+  declare candidateId: number
+
+  @column({ columnName: 'admin_id' })
+  declare adminId: number
+
+  @belongsTo(() => User, {
+    foreignKey: 'candidate_id',
+  })
+  declare candidate: BelongsTo<typeof User>
+
+  @belongsTo(() => User, {
+    foreignKey: 'admin_id',
+  })
+  declare admin: BelongsTo<typeof User>
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+}
