@@ -12,6 +12,7 @@ import CandidatesList from "./pages/CandidatesList";
 import InvitesList from "./pages/InvitesList";
 import UserDetail from "./pages/UserDetail";
 import Layout from "./components/Layout";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -55,7 +56,7 @@ const App = () => {
                 />
                 <Route path="profile/:userId?" element={<UserDetail />} />
               </Route>
-              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
         </BrowserRouter>
