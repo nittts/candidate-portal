@@ -16,7 +16,7 @@ import { useSendInvite } from "@/services/hooks/invites/useSendInvite";
 
 const UserDetail: React.FC = () => {
   const { userId } = useParams();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const { sendInvite, sendInviteStatus } = useSendInvite();
 
@@ -28,7 +28,16 @@ const UserDetail: React.FC = () => {
 
   console.log({ userData });
 
-  if (!userData) {
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Buscando Usuário</h2>
+        <Button onClick={() => navigate(-1)}>Voltar</Button>
+      </div>
+    );
+  }
+
+  if (!userData && !isLoading) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Usuário não encontrado</h2>

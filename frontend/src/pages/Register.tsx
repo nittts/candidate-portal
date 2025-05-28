@@ -137,8 +137,8 @@ const Register: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate("/login")} className="w-full">
-              Retornar ao Login
+            <Button onClick={() => navigate("/activate")} className="w-full">
+              Ir para Ativação
             </Button>
           </CardContent>
         </Card>

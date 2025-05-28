@@ -134,13 +134,13 @@ const ActivateAccount: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Label htmlFor="confirmPassword">Senha temporária</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    id="confirmPassword"
+                    id="previousPassword"
                     type="password"
-                    placeholder="Confirme sua Senha"
+                    placeholder="Senha temporária"
                     value={payload.previousPassword}
                     onChange={(e) => handleChange("previousPassword", e.target.value)}
                     className="pl-10"
