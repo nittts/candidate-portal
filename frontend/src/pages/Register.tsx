@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { User, Mail, Phone, MapPin, Calendar, GraduationCap, Code, Plus, X, Building2 } from "lucide-react";
+import { User, Mail, GraduationCap, Code, Plus, X, Building2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useConsultUserCEPAddress } from "@/services/hooks/user/useConsultUserCEPAddress";
+import { AbilityName } from "@/@types/Ability";
+
+const allTags = Array.from(Object.keys(AbilityName)) as AbilityName[];
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -67,7 +69,11 @@ const Register: React.FC = () => {
   };
 
   const addAbility = () => {
-    if (newAbility.trim() && !abilities.includes(newAbility.trim())) {
+    if (
+      newAbility.trim() &&
+      !abilities.includes(newAbility.trim()) &&
+      allTags.includes(newAbility.trim() as AbilityName)
+    ) {
       setAbilities([...abilities, newAbility.trim()]);
       setNewAbility("");
     }
@@ -252,6 +258,7 @@ const Register: React.FC = () => {
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
+                <p className="text-xs text-gray-400">Habilidades permitidas: {allTags.join(", ")}</p>
 
                 <div className="flex flex-wrap gap-2">
                   {abilities.map((ability) => (
@@ -263,7 +270,6 @@ const Register: React.FC = () => {
                 </div>
               </div>
 
-              {/* Degrees */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold flex items-center">
