@@ -14,6 +14,7 @@ export class AuthService {
     return {
       type: 'bearer',
       token: token.value!.release(),
+      user,
     }
   }
 }

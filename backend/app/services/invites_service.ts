@@ -6,7 +6,12 @@ import { DateTime } from 'luxon'
 
 export class InvitesService {
   async findNewInvitesCount(params: typeof FindnewInvitesCountValidator.type) {
-    const results = await Invite.query().where('candidateId', params.userId).where('seen', false)
+    const results = await Invite.query()
+      .where('candidateId', params.userId)
+      .where('seen', false)
+      .preload('admin')
+      .preload('candidate')
+      .exec()
 
     return { invites: results, count: results.length }
   }
@@ -25,7 +30,11 @@ export class InvitesService {
   }
 
   async findInvites(params: typeof FindnewInvitesCountValidator.type) {
-    const results = await Invite.query().where('candidateId', params.userId)
+    const results = await Invite.query()
+      .where('candidateId', params.userId)
+      .preload('admin')
+      .preload('candidate')
+      .exec()
 
     return { invites: results, count: results.length }
   }

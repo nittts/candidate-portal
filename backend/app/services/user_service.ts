@@ -33,7 +33,7 @@ export class UserService {
 
     query.where('userType', UserType.CANDIDATE)
 
-    return await query.exec()
+    return await query.preload('abilities').exec()
   }
 
   async create(userData: typeof CreateUserValidator.type) {
@@ -46,6 +46,8 @@ export class UserService {
     if (doesExists) {
       throw new Error('E-mail already exists')
     }
+
+    console.log({ password })
 
     const user = await User.create({
       ...rest,
