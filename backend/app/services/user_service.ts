@@ -10,12 +10,14 @@ import { DegreeService } from './degree_service.js'
 import { randomUUID } from 'node:crypto'
 import { UserType } from '#models/user/enums/user_type'
 import Hash from '@adonisjs/core/services/hash'
+import { MailService } from './mail_service.js'
 
 @inject()
 export class UserService {
   constructor(
     private abilityService: AbilityService,
-    private degreeService: DegreeService
+    private degreeService: DegreeService,
+    private mailService: MailService
   ) {}
 
   async index(params: typeof ListUserValidator.type) {
@@ -47,8 +49,6 @@ export class UserService {
       throw new Error('E-mail already exists')
     }
 
-    console.log({ password })
-
     const user = await User.create({
       ...rest,
       birthdate: DateTime.fromJSDate(new Date(birthdate)),
@@ -66,6 +66,8 @@ export class UserService {
     if (degrees) {
       await this.degreeService.createBulk(degrees.map((degree) => ({ ...degree, userId: user.id })))
     }
+
+    await this.mailService.sendCreatedUserEmail(user, password)
 
     return user
   }
