@@ -3,13 +3,14 @@ import { DateTime } from 'luxon'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 
 import User from '#models/user/user'
+import { AbilityName } from './enums/ability_name.js'
 
 export default class Ability extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
   @column()
-  declare name: string
+  declare name: AbilityName
 
   @column()
   declare userId: number
