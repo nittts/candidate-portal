@@ -9,13 +9,16 @@ export default class Invite extends BaseModel {
   declare id: number
 
   @column({ columnName: 'selected_date' })
-  declare selectedDate: string
+  declare selectedDate: DateTime
 
   @column({ columnName: 'candidate_id' })
   declare candidateId: number
 
   @column({ columnName: 'admin_id' })
   declare adminId: number
+
+  @column()
+  declare seen: boolean
 
   @belongsTo(() => User, {
     foreignKey: 'candidate_id',
