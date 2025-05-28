@@ -3,8 +3,9 @@ import { Infer } from '@vinejs/vine/types'
 
 export class ActivateUserValidator {
   static schema = vine.object({
-    userId: vine.number().positive(),
+    id: vine.number().positive(),
     password: vine.string(),
+    previousPassword: vine.string(),
   })
 
   static type: Infer<typeof ActivateUserValidator.schema>

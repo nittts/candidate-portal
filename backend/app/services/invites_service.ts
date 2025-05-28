@@ -1,5 +1,6 @@
 import Invite from '#models/invite/invite'
 import { FindnewInvitesCountValidator } from '#validators/invites/find_new_invites_count_validator'
+import { MarkAsSeenValidator } from '#validators/invites/mark_as_seen_validator'
 import { SendInviteValidator } from '#validators/invites/send_invite.validator'
 import { DateTime } from 'luxon'
 
@@ -10,13 +11,22 @@ export class InvitesService {
     return { invites: results, count: results.length }
   }
 
-  async sendInvite(params: typeof SendInviteValidator.type) {
+  async sendInvite(params: typeof SendInviteValidator.type, adminId: number) {
     return await Invite.create({
       candidateId: params.userId,
-      createdAt: DateTime.now(),
       seen: false,
       selectedDate: DateTime.now(),
-      adminId: params.userId,
+      adminId: adminId,
     })
+  }
+
+  async markAsSeen(params: typeof MarkAsSeenValidator.type) {
+    return await Invite.query().whereIn('id', params.inviteIds).update({ seen: true })
+  }
+
+  async findInvites(params: typeof FindnewInvitesCountValidator.type) {
+    const results = await Invite.query().where('candidateId', params.userId)
+
+    return { invites: results, count: results.length }
   }
 }

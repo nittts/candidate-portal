@@ -7,6 +7,9 @@ import { inject } from '@adonisjs/core'
 import { DateTime } from 'luxon'
 import { AbilityService } from './ability_service.js'
 import { DegreeService } from './degree_service.js'
+import { randomUUID } from 'node:crypto'
+import { UserType } from '#models/user/enums/user_type'
+import Hash from '@adonisjs/core/services/hash'
 
 @inject()
 export class UserService {
@@ -19,14 +22,16 @@ export class UserService {
     const query = User.query()
 
     if (params.name) {
-      query.where('name', params.name)
+      query.whereILike('fullName', `%${params.name}%`)
     }
 
-    if (params.abilities) {
+    if (Array.isArray(params.abilities) && params.abilities.length > 0) {
       query.whereHas('abilities', (abilityQuery) => {
-        abilityQuery.whereIn('name', params.abilities)
+        abilityQuery.whereIn('name', params.abilities as string[])
       })
     }
+
+    query.where('userType', UserType.CANDIDATE)
 
     return await query.exec()
   }
@@ -34,7 +39,21 @@ export class UserService {
   async create(userData: typeof CreateUserValidator.type) {
     const { abilities, degrees, birthdate, ...rest } = userData
 
-    const user = await User.create({ ...rest, birthdate: DateTime.fromJSDate(new Date(birthdate)) })
+    const password = randomUUID()
+
+    const doesExists = await User.findBy('email', userData.email)
+
+    if (doesExists) {
+      throw new Error('E-mail already exists')
+    }
+
+    const user = await User.create({
+      ...rest,
+      birthdate: DateTime.fromJSDate(new Date(birthdate)),
+      password,
+      active: false,
+      userType: UserType.CANDIDATE,
+    })
 
     if (abilities) {
       await this.abilityService.createBulk(
@@ -50,7 +69,13 @@ export class UserService {
   }
 
   async activate(params: typeof ActivateUserValidator.type) {
-    const user = await User.findOrFail(params.userId)
+    const user = await User.findOrFail(params.id)
+
+    const isValidDefaultPassword = await Hash.verify(user.password, params.previousPassword)
+
+    if (!isValidDefaultPassword) {
+      throw new Error('Unauthorized')
+    }
 
     user.active = true
     user.password = params.password

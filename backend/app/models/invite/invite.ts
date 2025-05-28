@@ -8,7 +8,7 @@ export default class Invite extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column({ columnName: 'selected_date' })
+  @column.dateTime({ columnName: 'selected_date' })
   declare selectedDate: DateTime
 
   @column({ columnName: 'candidate_id' })
@@ -21,12 +21,12 @@ export default class Invite extends BaseModel {
   declare seen: boolean
 
   @belongsTo(() => User, {
-    foreignKey: 'candidate_id',
+    foreignKey: 'candidateId',
   })
   declare candidate: BelongsTo<typeof User>
 
   @belongsTo(() => User, {
-    foreignKey: 'admin_id',
+    foreignKey: 'adminId',
   })
   declare admin: BelongsTo<typeof User>
 

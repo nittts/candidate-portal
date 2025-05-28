@@ -5,7 +5,7 @@ export class CreateDegreeValidator {
   static schema = vine.object({
     name: vine.string(),
     institutionName: vine.string(),
-    graduationDate: vine.date(),
+    graduationDate: vine.date({ formats: ['iso8601'] }),
   })
 
   static type: Infer<typeof CreateDegreeValidator.schema>

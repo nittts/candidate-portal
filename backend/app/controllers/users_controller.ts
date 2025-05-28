@@ -6,32 +6,49 @@ import { ListUserValidator } from '#validators/user/list_user_validator'
 import { FindUserByIdValidator } from '#validators/user/find_by_id_user_validator'
 import { CreateUserValidator } from '#validators/user/create_user_validator'
 import { ActivateUserValidator } from '#validators/user/active_user_validator'
+import { UserType } from '#models/user/enums/user_type'
 
 @inject()
 export default class UsersController {
   constructor(private userService: UserService) {}
 
   async index(context: HttpContext) {
-    const payload = await ListUserValidator.compile(context.request.qs())
+    const { auth, request, response } = context
+    const requestUser = await auth.authenticate()
+    const payload = await ListUserValidator.compile(request.qs())
+
+    if (requestUser.userType !== UserType.ADMIN) {
+      response.abort('Invalid user type', 401)
+    }
 
     return this.userService.index(payload)
   }
   async findById(context: HttpContext) {
-    const payload = await FindUserByIdValidator.compile(context.params)
+    const { auth, request, response } = context
+    const requestUser = await auth.authenticate()
+    const payload = await FindUserByIdValidator.compile(request.params())
+
+    if (requestUser.userType === UserType.CANDIDATE && requestUser.id !== payload.id) {
+      response.abort('Forbidden Access', 403)
+    }
 
     return this.userService.findById(payload)
   }
 
   async create(context: HttpContext) {
-    const payload = await CreateUserValidator.compile(context.request.body())
+    const { request } = context
+    const payload = await CreateUserValidator.compile(request.body())
 
     return this.userService.create(payload)
   }
 
   async activate(context: HttpContext) {
+    const { request } = context
+    console.log(request.params())
+
     const payload = await ActivateUserValidator.compile({
-      ...context.request.params,
-      ...context.request.body(),
+      ...request.params(),
+      ...request.body(),
     })
 
     return this.userService.activate(payload)

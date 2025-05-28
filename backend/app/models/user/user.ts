@@ -24,7 +24,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare fullName: string | null
 
-  @column()
+  @column.dateTime()
   declare birthdate: DateTime | null
 
   @column()
@@ -61,12 +61,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare degrees: HasMany<typeof Degree>
 
   @hasMany(() => Invite, {
-    foreignKey: 'candidate_id',
+    foreignKey: 'candidateId',
   })
   declare receivedInvites: HasMany<typeof Invite>
 
   @hasMany(() => Invite, {
-    foreignKey: 'admin_id',
+    foreignKey: 'adminId',
   })
   declare sentInvites: HasMany<typeof Invite>
 
